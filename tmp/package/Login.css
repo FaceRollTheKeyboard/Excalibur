@@ -1,0 +1,23 @@
+/*
+{{name}} 外在肌肤，水嫩丝滑
+生成时间：{{date}}   破门狂人R2-D2为您服务！
+*/
+
+.name{
+    margin-left: 420px;
+}
+#login{
+    margin-left: 115px;
+    color:#9d9d9d;
+}
+.login{
+    margin: 90px auto 0px auto;
+    max-width: 300px;
+}
+
+.login input{
+    margin: 20px auto;
+    height: 40px;
+    max-width: 300px;
+    width:100%;
+}

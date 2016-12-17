@@ -1,0 +1,4 @@
+{
+  "nav": [{"name":"组件列表","en":"list","front":true,"bePartOf":"","only":0,"pageType":"_package","require":[]},{"name":"组件详情","en":"details","front":true,"bePartOf":"","only":0,"pageType":"_package","require":[]}],
+  "builded": [{"name":"组件列表","en":"list","front":true,"bePartOf":"","only":0,"pageType":"_package","require":[]},{"name":"组件详情","en":"details","front":true,"bePartOf":"","only":0,"pageType":"_package","require":[]}]
+}

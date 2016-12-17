@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head >
+    <meta charset="UTF-8">
+    <title>Excalibur</title>
+    <meta content="成远 成远商务" name="Description">
+    <meta content="成远" name="Keywords">
+    <meta charset="UTF-8">
+    <!--坑爹的IE兼容-->
+    <!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
+    <!--坑爹的将360默认为极速模式打开-->
+    <meta name="renderer" content="webkit">
+    <!--移动优先-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!-- 坑爹的微信缓存-->
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <!--avalon-->
+
+    <script src="./src/js/require.js"></script>
+    <script src="./src/js/avalon.modern.js"></script>
+    <!--图标引入-->
+    <!--bootstrap引入-->
+    <link href="./src/css/layout.css" rel="stylesheet">
+    <!--已合并到layout中-->
+
+    <!--fontAwesone 引入-->
+    <link href="./src/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+
+    <!--本地CSS-->
+    <!--<link href="./src/css/mooshroom.css" rel="stylesheet">-->
+    <link href="./src/css/local.css" rel="stylesheet">
+    <style>
+        [ms-controller] {
+            visibility: hidden
+        }
+    </style>
+
+</head>
+<body ms-controller="index">
+    {{html|html}}
+</body>
+<script src="index.js"></script>
+</html>

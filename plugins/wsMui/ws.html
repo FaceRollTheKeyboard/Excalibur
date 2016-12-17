@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+</head>
+<body>
+<script>
+    mui.plusReady(function () {
+        var vm={
+            init: function (opt) {
+                //使用浅拷贝传入参数
+                for(var x in opt){
+                    if(vm[x]!=undefined){
+                        vm[x]=opt[x]
+                    }
+                }
+                window.addEventListener('customEvent',function(event){
+                    //通过event.detail可获得传递过来的参数内容
+                    vm.call(event.detail)
+                });
+
+                //启动
+                vm.start()
+            },
+            state: 0,//连接状态：0-尚未连接；1-连接正常；2-已经断线
+            link: {},//连接实体
+
+            server: '',//服务器地址格式；'ws://121.41.115.217:9999'
+            debug: false,
+            reStartTime: 3000,//断线重连时间
+            heartTime: 50000,//心跳间隔时间
+            autoRestart:false,
+            sendList: [],//被阻塞的请求列表，将在连接成功之后发送
+            onopen: function () {//成功连接之后的额外回调
+
+            },
+            onerror: function () {//连接失败的额外回调
+
+            },
+            onclose: function () {//连接被关闭的额外回调
+
+            },
+            onmessage: function () {//消息接受是的额外回调
+
+            },
+            /*创建连接*/
+            timeout:"",
+            start: function () {
+                if (vm.server != '') {
+                    try{
+                        tip.on("正在建立连接……",1,30000)
+                    }catch(err){}
+                    var link;
+                    var server = vm.server
+
+                    if ('WebSocket' in window) {
+                        link = new WebSocket(server);
+                    } else if ('MozWebSocket' in window) {
+                        link = new MozWebSocket(server);
+                    } else {
+                        try{
+                            tip.off("正在建立连接……",1,30000)
+                        }catch(err){}
+                        alert('我们的浏览器不支持您所使用的浏览器，请使用正确的google chrome浏览器。');
+                        return
+                    }
+
+                    //超时重连
+                    clearTimeout(vm.timeout)
+                    vm.timeout=setTimeout(function(){
+                        if(link.readyState==0){
+                            console.log("连接超时，正在准备重新连接……")
+                            try{
+                                tip.off("正在建立连接……",1,30000)
+                            }catch(err){
+                                console.log('正在建立连接……')
+                            }
+
+                            link.close()
+                            vm.start()
+                        }
+                    },10000)
+
+
+                    /*添加对基本事件的监听*/
+                    link.onerror = function (evt) {
+                        try{
+                            tip.off("正在建立连接……",1,30000)
+                            tip.off("连接失败，正在尝试重新连接",0)
+                            tip.on("连接失败，正在尝试重新连接",0)
+                        }catch(err){}
+                        //产生异常
+                        vm.onerror(evt)
+                        vm.state = 2;
+                        console.log("websocket连接错误：" + server, 1, 3000)
+//                        setTimeout(function(){
+//                            vm.reStart()
+//                        },vm.reStartTime)
+                    };
+
+                    link.onopen = function (evt) {
+                        try{
+                            tip.off("正在建立连接……",1,30000)
+                            tip.on("成功连接！",1,1000)
+                            tip.off("连接失败，正在尝试重新连接",0)
+                        }catch(err){}
+                        //已经建立连接
+                        vm.onopen(evt)
+                        console.log("websocket连接成功：" + server, 1, 3000);
+                        console.log("连接成功：" + evt)
+                        vm.state = 1;
+
+                        //发送阻塞列表
+                        setTimeout(function(){
+                            for (var i = 0; i < vm.sendList.length; i++) {
+                                window.webSocketLinks[vm.id].send(vm.sendList[i])
+                            }
+                            //清空阻塞列表
+                            vm.sendList = []
+                        },20)
+
+
+                    };
+
+                    link.onclose = function (evt) {
+                        try{
+                            tip.off("正在建立连接……",1,30000)
+                            tip.on("连接关闭",1,1000)
+                        }catch(err){}
+                        //已经关闭连接
+                        vm.onclose(evt)
+                        console.log("websocket连接已关闭：" + server, 1, 3000);
+                        console.log("连接关闭：" + evt)
+                        vm.state = 2;
+
+                        if(vm.autoRestart){
+                            setTimeout(function () {
+                                vm.reStart()
+                            }, vm.reStartTime)
+                        }
+
+                    };
+
+                    link.onmessage = function (evt) {
+                        //当接受消息 的时候
+                        vm.onmessage(evt)
+                        vm.listen(evt)
+                    };
+                    window.webSocketLinks = {}
+                    window.webSocketLinks[vm.id] = link
+                }
+            },
+
+            /*发送数据*/
+            tF: {},//缓存的回调方法
+            mF: {},//准备执行的回调方法
+            op: "",//上一次的传入的参数(下面这个方法)
+            call: function (op) {
+
+                /*传入opt标准格式：
+                 * {
+                 i:"",//指令,必须有
+                 data:"",//数据，看情况
+                 success：function(data){}
+                 //回调函数，一般都有，用于执行，本次请求处理完成之后回调的方法，会在这个函数中传入data，也就是服务器返回过来的数据
+
+                 }
+
+                 * */
+
+                //验证重复性
+                var newOp = JSON.stringify(op) + "op"
+
+                if (newOp != vm.op) {
+                    //通过
+
+                    //执行
+                    var opt = {}
+                    for (var x in op) {
+                        opt[x] = op[x]
+                    }
+                    //var opt=opt||{}
+
+                    if (typeof opt == "object" && opt != {}) {
+                        //抓取数据区
+                        var d = opt.data;
+
+                        //抓取指令i
+                        var i = opt.i;
+
+                        //生成ticket
+
+                        var t = opt.t
+
+                        //合成发送字符串
+                        var obj = {i: i, t: t, d: d}
+                        var sid=cache.go('sid')
+                        if(sid.length>0){
+                            obj.s=sid
+                        }
+
+                        var str = JSON.stringify(obj)
+
+//                    console.log(str)
+
+                        //连接状态检测
+                        if (vm.state == 1) {
+
+                            //发送
+                            window.webSocketLinks[vm.id].send(str)
+                        }
+                        else {
+                            vm.sendList.push(str)
+                        }
+
+                        //缓存来源页面
+                        vm.tF[t] = opt.from
+                        //回收opt
+                        opt = {}
+                        console.log("done!!")
+                    }
+
+
+                    //缓存本次请求的OP，并设置过期时间
+                    vm.op = newOp
+
+                    setTimeout(function () {
+                        vm.op = ""
+                    }, 1000)
+                    //console.log("op!!!---->"+vm.op)
+                }
+
+                else {
+                    //执行过滤
+                }
+
+
+            },
+
+
+            /*监听消息*/
+            todo: {},
+            listen: function (evt) {
+                //收到服务器消息，使用evt.data提取
+                var res = JSON.parse(evt.data)
+
+                var mmid = "m" + res.m
+                //缓存s
+                if(res.c=='m'||res.c=="p"){
+                    cache.go({
+                        sid:res.s
+                    })
+                }
+
+
+                //判断回调
+                if (res.c == "t") {
+                    //这次是桥派来送mid的
+                    //绑定mid的回调函数
+                    try {
+                        vm.mF[mmid] = vm.tF[res.t]
+                        vm.tF[res.t] = null
+                    }
+                    catch (err) {
+                        console.log(err)
+                    }
+
+                    //传给页面
+                    mui.fire(plus.webview.getWebviewById(vm.mF[mmid]),'wsCall',res)
+
+                }
+                else if (res.c == "m") {
+                    //这次是服务器派来送数据的
+                    if (typeof vm.mF[mmid] == "function") {
+                        //执行回调
+
+                        mui.fire(plus.webview.getWebviewById(vm.mF[mmid]),'wsCall',res)
+//                        console.log(res.d)
+                        //一分钟之后清除回调函数,腾出内存空间
+                        setTimeout(function () {
+                            vm.mF[mmid] = null
+                        }, 60000)
+                    }
+                    else {
+                        console.log("mid丢失:" + res)
+                    }
+                }
+                else if (res.c == "p") {
+                    //这次是服务器直接推送的
+                    if (typeof vm.todo[res.i] == "function") {
+                        vm.todo[res.i](res.d)
+                    }
+                    else {
+                        console.log('没有充分的准备来应对服务器的未知指令')
+                    }
+
+                }
+                else {
+                    //还不知道这家伙是用来干嘛的
+                    console.log("未知的c:" + res.c)
+                }
+
+                if (vm.debug) {
+                    console.log(res)
+                }
+
+
+            },
+
+            /*注册监听*/
+            addListen: function (name, fn) {
+                if (typeof name == "string") {
+                    if (typeof fn == "function") {
+                        try {
+                            vm.todo[name] = fn
+                            console.log("监听" + name + "事件的方法已就绪")
+                        } catch (e) {
+                            console.log(e)
+                        }
+
+                    }
+                    else {
+                        console.log("传入的方法必须为函数:" + fn)
+                    }
+                }
+                else {
+                    console.log("传入的名称必须为字符串:" + name)
+                }
+            },
+            /*断线重连*/
+            reStart: function () {
+                vm.start()
+                console.log("正在尝试重新连接")
+            }
+        }
+        vm.init({
+            server: 'ws://js.s.tansuyun.cn:65502',//服务器地址格式；'ws://121.41.115.217:9999'
+        })
+        window.ws=vm
+    })
+</script>
+
+</body>
+</html>
