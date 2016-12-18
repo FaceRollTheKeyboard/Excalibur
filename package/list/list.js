@@ -2,10 +2,10 @@
 组件列表 内在灵魂，沉稳坚毅
  生成时间：Sat Dec 17 2016   破门狂人R2-D2为您服务！
 */
-define('list',[
+define([
     'avalon',
-    'text!../../package/list/list.html',
-    'css!../../package/list/list.css'
+    'text!./list.html',
+    'css!./list.css'
 ], function (avalon, html, css) {
     var vm=avalon.define({
         $id:"list",

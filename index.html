@@ -19,9 +19,10 @@
     <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
     <meta http-equiv="pragma" content="no-cache" />
     <!--avalon-->
+    <!--<script src="./src/js/avalon.js"></script>-->
+    <script data-main="./index.js"  src="./src/js/require.js"></script>
 
-    <script src="./src/js/require.js"></script>
-    <script src="./src/js/avalon.modern.js"></script>
+
     <!--图标引入-->
     <!--bootstrap引入-->
     <link href="./src/css/layout.css" rel="stylesheet">
@@ -40,8 +41,9 @@
     </style>
 
 </head>
-<body ms-controller="index">
-    {{html|html}}
+<body ms-controller="index" ms-html="html">
+
 </body>
-<script src="index.js"></script>
+<!--<script src="./src/js/mmRouter.js"></script>-->
+<!--<script src="index.js"></script>-->
 </html>

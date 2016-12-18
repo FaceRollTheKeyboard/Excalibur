@@ -1,144 +1,83 @@
-/**
- * Created by mooshroom on 2015/12/11.
- */
-/*………………………………………………………………………………………………全局配置………………………………………………………………………………………………*/
-
-/*………………………………………………………………………………………………index的视图模型………………………………………………………………………………………………*/
-require([
-    'avalon',
-    'mmRequest',
-    'mmRouter'
-], function (avalon) {
-    var vm = avalon.define({
-        $id: "index",
-        ready: function () {
-            require([
-                "mmRouter",
-            ], function () {
-
-
-                //构建导航的路由
-                getMap(vm.nav);
-                console.log("路由构建完毕")
-                //开始监听
-                avalon.history.start();
-
-                avalon.scan();
-
-            })
-
-        },
-        reset: function () {
-
-        },
-
-        html: '',
-        //路由
-
-
-    })
-
-    avalon.scan();
-    vm.ready()
-
-
-    window.index = vm
-
-    /*………………………………………………………………………………………………路由处理函数………………………………………………………………………………………………*/
-
-    //这个函数用来对用户进行权限控制，未来可能会添加多种限制条件
-    function checkLimit(fn, limit) {
-
-
-        if (cache.go("UnitID") == 23) {
-            fn()
-        } else {
-            tip.on("您的账户没有访问改模块的权限")
-            //history.go(-1)
+/*全局配置*/
+requirejs.config({
+    //By default load any module IDs from js/lib
+    //baseUrl: './src/js',
+    //except, if the module ID starts with "app",
+    //load it from the js/app directory. paths
+    //config is relative to the baseUrl, and
+    //never includes a ".js" extension since
+    //the paths config could be for a directory.
+    paths: {
+        avalon: 'src/js/avalon',
+        mmRouter:'src/js/mmRouter',
+        'css': 'src/js/css',
+        'text':'src/js/text'
+    },
+    map: {
+        '*': {
+            'css': 'css',
+            'text':'text'
         }
+    },
 
-    }
+});
 
-    /*路由*/
-    function newRouter(n) {
-        var en = n.en;
+/*顶层视图*/
+// Start the main app logic.
+requirejs(['avalon'], function (avalon) {
+    avalon.ready(function () {
+        var vm=avalon.define({
+            $id:"index",
+            buildRouter: function () {
+                require(['mmRouter'], function () {
 
-        avalon.router.get('/' + en + '/:i', function (i) {
+                    var routers=[{
+                        name:"列表页面",
+                        en:"list",
+                        params:false
+                    },{
+                        name:"详情页面",
+                        en:"details",
+                        params:true
+                    }]
 
-            //检查权限
-            //door.comeIn({})
+                    routers.forEach(function (el) {
+                        var path="/"+el.en
+                        if(el.params){
+                            path+='/:i'
+                        }
 
-            //开启进度条
-            try {
-                pb.startT()
-            } catch (err) {
-            }
-            if (!n.modal) {
-                //关闭模态框
-                try {
-                    modal.mustOut()
-                }
-                catch (err) {
-                }
-            }
+                        avalon.router.add(path, function (i) {
+                            require(['./package/'+el.en+'/'+el.en+'.js'], function (that) {
+                                that.ready(i)
+                            })
+                        })
 
+                    })
 
-            //tip.on("正在加载……",1)
-            if (n.vm) {
-                require([n.vm], function () {
-                    avalon.vmodels[en].ready(i)
-                    //tip.off("正在加载……",1)
+                    avalon.router.add('/', function () {
+                        goto('#!/list')
+                    })
+                    avalon.router.error(function (i) {
+                        console.log('路径错误跳转中'+i)
+                        goto('#!/list')
+                    })
 
-                    //结束进度条
-                    try {
-                        pb.endT()
-                    } catch (err) {
-                    }
+                    avalon.history.start({
+                        //root: "/#", //根路径
+                        //html5: true, //是否使用HTML5 history
+                        hashPrefix: "!",//
+                        autoScroll: true //滚动
+                    })
                 })
-            }
-            if (n.fn) {
-                n.fn(i)
-
-                //结束进度条
-                try {
-                    pb.endT()
-                } catch (err) {
-                }
-            }
-
-            document.getElementById("title").innerText = n.name
-            console.log(n.name + "模块加载完毕")
-        });
-        console.log(n.name + "路由创建完毕")
-
-
-    }
-
-    function getMap(nav) {
-        console.log("开始构建路由")
-        var l = nav
-        var ll = l.length
-        var lsl;
-        for (var i = 0; i < ll; ++i) {
-            if (l[i].sub) {
-                //有第二级导航
-                lsl = l[i].sub.length
-                for (var o = 0; o < lsl; ++o) {
-                    newRouter(l[i].sub[o])
-                }
-            }
-            else {
-                //直接渲染项目
-                newRouter(l[i])
-
-            }
-        }
-
-    }
-
-
-})
-
+            },
+            html:"123"
+        })
+        vm.buildRouter()
+        avalon.scan(document.body)
+        return window[vm.$id]=vm
+    })
+});
 
 /*………………………………………………………………………………………………全局函数………………………………………………………………………………………………*/
 //跨浏览器事件对象方法
@@ -190,7 +129,7 @@ EventUtil.formatEvent = function (oEvent) {
     return oEvent;
 };
 
-EventUtil.getEvent = function () {
+EventUtil.getEvent = function() {
     if (window.event) {
         return this.formatEvent(window.event);
     } else {
@@ -201,7 +140,7 @@ EventUtil.getEvent = function () {
 
 //批量绑定快捷键
 function bindK(obj) {
-    require(['../../plugins/shortcut/shortcut.js'], function () {
+    require(['plugins/shortcut/shortcut.js'], function () {
         /*快捷键设置*/
 
         var x
@@ -222,7 +161,7 @@ function bindK(obj) {
 
 //批量删除快捷键
 function removeK(obj) {
-    require(['../../plugins/shortcut/shortcut.js'], function () {
+    require(['plugins/shortcut/shortcut.js'], function () {
         /*快捷键设置*/
 
         var x
@@ -285,7 +224,7 @@ function newDateAndTime(Str) {
     var r = new Date();
     r.setFullYear(ds[0], ds[1] - 1, ds[2]);
     r.setHours(ts[0], ts[1], ts[2], 0);
-    r = r.getTime()
+    r=r.getTime()
     return r;
 }
 
@@ -298,7 +237,7 @@ function newDateAndTime(Str) {
  *date = date.getTime();
  *1479280332000
  * */
-function nowTimeTamp(date) {
+function nowTimeTamp(date){
     date = new Date(Date.parse(date.replace(/-/g, "/")));
     date = date.getTime();
     return date;
@@ -314,13 +253,13 @@ function T2I(Timestamp) {
  * s 要进行转换的时间戳
  * u 转换后的时间单位 字符串 'ms' 毫秒 's' 秒
  * */
-function timeLengthFormat(s, u) {
-    switch (u) {
+function timeLengthFormat(s,u){
+    switch (u){
         case 'ms':
-            return Math.ceil(s * 1000)
+            return Math.ceil(s*1000)
             break
         case 's':
-            return Math.ceil(s / 1000)
+            return Math.ceil(s/1000)
             break
     }
 }
@@ -369,11 +308,11 @@ function buildListParams(p, k, t) {
 
 
 //安全赋值，用于解决服务端在字段为空时返回的空数组无法复制给原本设计为对象格式的字段问题
-function safeMix(to, from) {
+function safeMix(to,from){
     ForEach(from, function (el, key) {
-        try {
-            to[key] = from[key]
-        } catch (err) {
+        try{
+            to[key]=from[key]
+        }catch (err){
             console.log(err)
         }
     })
