@@ -1,3 +1,4 @@
+console.time('总共打开时间')
 /*全局配置*/
 requirejs.config({
     //By default load any module IDs from js/lib
@@ -22,15 +23,26 @@ requirejs.config({
 
 });
 
+console.time('avalon加载')
 /*顶层视图*/
 // Start the main app logic.
 requirejs(['avalon'], function (avalon) {
-    avalon.ready(function () {
+    console.timeEnd('avalon加载')
+    avalon.config({
+        debug: true
+    })
+
+    console.time('avalon构建')
+
         var vm=avalon.define({
             $id:"index",
             buildRouter: function () {
-                require(['mmRouter'], function () {
 
+                console.time('路由加载')
+
+                require(['mmRouter'], function () {
+                    console.timeEnd('路由加载')
+                    console.time('路由构建')
                     var routers=[{
                         name:"列表页面",
                         en:"list",
@@ -50,6 +62,8 @@ requirejs(['avalon'], function (avalon) {
                         avalon.router.add(path, function (i) {
                             require(['./package/'+el.en+'/'+el.en+'.js'], function (that) {
                                 that.ready(i)
+                                console.timeEnd('路由跳转')
+                                console.timeEnd('总共打开时间')
                             })
                         })
 
@@ -63,20 +77,24 @@ requirejs(['avalon'], function (avalon) {
                         goto('#!/list')
                     })
 
+                    console.timeEnd('路由构建')
                     avalon.history.start({
                         //root: "/#", //根路径
                         //html5: true, //是否使用HTML5 history
                         hashPrefix: "!",//
                         autoScroll: true //滚动
                     })
+
+                    console.time('路由跳转')
                 })
             },
             html:"123"
         })
+    console.timeEnd('avalon构建')
         vm.buildRouter()
         avalon.scan(document.body)
         return window[vm.$id]=vm
-    })
+
 });
 
 /*………………………………………………………………………………………………全局函数………………………………………………………………………………………………*/
