@@ -1,4 +1,4 @@
-console.time('总共打开时间')
+
 /*全局配置*/
 requirejs.config({
     //By default load any module IDs from js/lib
@@ -62,8 +62,7 @@ require(['avalon','mmRouter'], function (avalon) {
                         avalon.router.add(path, function (i) {
                             require(['./package/'+el.en+'/'+el.en+'.js'], function (that) {
                                 that.ready(i)
-                                console.timeEnd('路由跳转')
-                                console.timeEnd('总共打开时间')
+
                             })
                         })
 
@@ -85,7 +84,7 @@ require(['avalon','mmRouter'], function (avalon) {
                         autoScroll: true //滚动
                     })
 
-                    console.time('路由跳转')
+
                 })
             },
             html:"123"
