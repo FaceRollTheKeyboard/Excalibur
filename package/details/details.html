@@ -2,6 +2,25 @@
     组件详情 核心骨架，百折不挠
     生成时间：Sat Dec 17 2016   破门狂人R2-D2为您服务！
 -->
-<div ms-controller="details">
-    <a href="#!/list">444</a>
+<div ms-controller="details" class="box-row hor-ends">
+    <div class="tablet" style="width: 300px;margin-right: 20px">
+        <a ms-for="el in @list" ms-attr="{href:'#!/details/'+el.en}" style="display: block">{{el.name}}</a>
+    </div>
+    <div style="width: 100%">
+        <div class="tablet">
+            <strong>示例</strong>
+            <hr>
+            <div ms-html="demo">
+
+            </div>
+        </div>
+        <div class="tablet">
+            <strong>文档</strong>
+            <hr>
+            <div ms-html="doc">
+
+            </div>
+        </div>
+    </div>
+
 </div>
