@@ -3,5 +3,37 @@
     生成时间：Sat Dec 17 2016   破门狂人R2-D2为您服务！
 -->
 <div ms-controller="list">
-    <a href="#!/details/0">44</a>
+    <h1 class="big-title">
+        Excalibur <br>
+        <small>基于avalon2的前端组件库</small>
+    </h1>
+
+    <!--<div class="tablet">-->
+        <!--<h2>前言</h2>-->
+        <!--<hr>-->
+        <!--介绍介绍-->
+    <!--</div>-->
+
+    <div class="tablet">
+        <strong>组件列表</strong>
+        <hr>
+
+        <div class="row">
+            <div class="col-md-2" ms-for="el in @list">
+                <!--组件连接-->
+                <a class="lib-list-item" ms-attr="{href:'#!/details/'+ el.en}">
+                    <div :css="{backgroundImage: 'url('+'./package/'+el.en+'/'+el.en+'.jpg' + ')'}">
+                    </div>
+
+                   {{el.name}}
+
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+
+
+
 </div>

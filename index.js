@@ -1,4 +1,3 @@
-
 /*全局配置*/
 requirejs.config({
     //By default load any module IDs from js/lib
@@ -26,7 +25,7 @@ requirejs.config({
 console.time('avalon加载')
 /*顶层视图*/
 // Start the main app logic.
-require(['avalon','mmRouter'], function (avalon) {
+require(['avalon'], function (avalon) {
     console.timeEnd('avalon加载')
     avalon.config({
         debug: true
@@ -62,7 +61,6 @@ require(['avalon','mmRouter'], function (avalon) {
                         avalon.router.add(path, function (i) {
                             require(['./package/'+el.en+'/'+el.en+'.js'], function (that) {
                                 that.ready(i)
-
                             })
                         })
 
@@ -83,7 +81,6 @@ require(['avalon','mmRouter'], function (avalon) {
                         hashPrefix: "!",//
                         autoScroll: true //滚动
                     })
-
 
                 })
             },

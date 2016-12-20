@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-cmn-Hans">
-<head >
+<head>
     <meta charset="UTF-8">
     <title>Excalibur</title>
-    <!--<meta content="成远 成远商务" name="Description">-->
-    <!--<meta content="成远" name="Keywords">-->
+    <meta content="avalon2 组件库" name="Description">
+    <meta content="Excalibur avalon 组件库 碳素云 mooshroom" name="Keywords">
     <meta charset="UTF-8">
     <!--坑爹的IE兼容-->
     <!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
@@ -13,15 +13,15 @@
     <!--移动优先-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <!-- 坑爹的微信缓存-->
-    <meta http-equiv="cache-control" content="max-age=0" />
-    <meta http-equiv="cache-control" content="no-cache" />
-    <meta http-equiv="expires" content="0" />
-    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
-    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="max-age=0"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="expires" content="0"/>
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT"/>
+    <meta http-equiv="pragma" content="no-cache"/>
     <!--avalon-->
 
     <script src="./src/js/avalon.js"></script>
-    <script  src="./src/js/require.js"></script>
+    <script src="./src/js/require.js"></script>
 
     <!--图标引入-->
     <!--bootstrap引入-->
@@ -38,10 +38,34 @@
         [ms-controller] {
             visibility: hidden
         }
+        body{
+            min-height: 700px;
+            background-image: url(./src/images/noisy_grid_@2X.png);
+            padding-bottom: 100px;
+        }
+        .main{
+            min-height: 300px;
+            padding-bottom: 100px;
+        }
+        .footer{
+            height: 300px;
+            background-image:url(./src/images/wallhaven-379818.jpg) ;
+            background-size: 100% auto;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            box-shadow: inset 0px 0px 20px #000;
+        }
     </style>
-
 </head>
-<body ms-controller="index" ms-html="html">
+<body ms-controller="index">
+
+<div class='container main' ms-html="html" >
+
+</div>
+<div class="footer">
+
+</div>
 
 </body>
 <script src="./src/js/mmRouter.js"></script>
