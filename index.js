@@ -26,7 +26,7 @@ requirejs.config({
 console.time('avalon加载')
 /*顶层视图*/
 // Start the main app logic.
-requirejs(['avalon'], function (avalon) {
+require(['avalon','mmRouter'], function (avalon) {
     console.timeEnd('avalon加载')
     avalon.config({
         debug: true

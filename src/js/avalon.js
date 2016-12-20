@@ -11,7 +11,8 @@ IE7的checked属性应该使用defaultChecked来设置
 修正ms-visible,ms-effect同在一个元素时出BUG的情况
 修正selected属性同步问题
 
-*/(function (global, factory) {
+*/
+(function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() : typeof define === 'function' && define.amd ? define(factory) : global.avalon = factory();
 })(this, function () {
     'use strict';
