@@ -49,9 +49,11 @@ input {
     color: #fefff9;
     padding:0px 5px ;
     border-left: 5px solid #f7eba3;
+    /*margin-top: -80px;*/
+    font-size: 50px;
 }
 .big-title>small{
-    color: #d6cfb7
+    color: #f6eaa2
 }
 
 
